@@ -25,7 +25,7 @@ toReadStream(spawn('ls', ['-lah'])).on('error', function(err) {
 });
 ```
 
-# Limiting the output of the steam
+Limiting the output of the steam
 
 ```js
 var toReadStream = require('../index'),
