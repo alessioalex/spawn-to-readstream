@@ -7,8 +7,6 @@ var test         = require('tap').test,
 test('emit data && end events', function(t) {
   var data, stream, thisFile;
 
-  t.plan(1);
-
   thisFile = fs.readFileSync(__filename);
   data     = '';
   stream   = toReadStream(spawn('cat', [__filename]));
@@ -17,8 +15,10 @@ test('emit data && end events', function(t) {
     data += buf;
   });
 
-  stream.on('end', function() {
+  stream.on('end', function(cut) {
     t.equal(thisFile.length, data.length, 'spawn cat must equal readFileSync');
+    t.equal(cut, false);
+    t.end();
   });
 });
 
@@ -53,5 +53,21 @@ test('emit error event but not end event', function(t) {
       t.ok(/non-zero exit code/.test(errMsg), 'non zero exit code');
       t.ok(/Not a git repository/.test(errMsg), 'correct error message');
     });
+  });
+});
+
+test('limit stream to number of bytes', function(t) {
+  var size, stream, thisFile;
+
+  size     = 0;
+  stream   = toReadStream(spawn('cat', ['/dev/urandom']), 100);
+
+  stream.on('data', function(buf) {
+    size += buf.length;
+  });
+
+  stream.on('end', function(cut) {
+    t.equal(cut, true, 'child process was cut');
+    t.end();
   });
 });
