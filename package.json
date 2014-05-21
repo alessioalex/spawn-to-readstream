@@ -3,7 +3,7 @@
   "license": "MIT",
   "name": "spawn-to-readstream",
   "description": "Converts spawn to a ReadStream, buffers the error and emits it",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/alessioalex/spawn-to-readstream.git"
@@ -20,7 +20,7 @@
     "spawn-error"
   ],
   "dependencies": {
-    "limit-spawn": "0.0.x",
+    "limit-spawn": "0.0.3",
     "through2": "~0.4.1"
   },
   "devDependencies": {
