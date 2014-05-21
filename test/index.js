@@ -1,15 +1,13 @@
-var test         = require('tap').test,
-    toReadStream = require('../'),
-    through      = require('through'),
-    fs           = require('fs'),
-    spawn        = require('child_process').spawn;
+var path = require('path');
+var test = require('tap').test;
+var toReadStream = require('../');
+var fs = require('fs');
+var spawn = require('child_process').spawn;
 
 test('emit data && end events', function(t) {
-  var data, stream, thisFile;
-
-  thisFile = fs.readFileSync(__filename);
-  data     = '';
-  stream   = toReadStream(spawn('cat', [__filename]));
+  var thisFile = fs.readFileSync(__filename);
+  var data = '';
+  var stream = toReadStream(spawn('cat', [__filename]));
 
   stream.on('data', function(buf) {
     data += buf;
@@ -23,15 +21,11 @@ test('emit data && end events', function(t) {
 });
 
 test('emit error event but not end event', function(t) {
-  var data, stream, ps, end, errMsg;
-
-  t.plan(5);
-
-  end    = false;
-  data   = '';
-  errMsg = '';
-  ps     = spawn('git', ['log'], { cwd: '/tmp' });
-  stream = toReadStream(ps);
+  var end = false;
+  var data = '';
+  var errMsg = '';
+  var ps = spawn('git', ['log'], { cwd: '/tmp' });
+  var stream = toReadStream(ps);
 
   stream.on('data', function(buf) {
     data += buf;
@@ -43,6 +37,7 @@ test('emit error event but not end event', function(t) {
 
   stream.on('error', function(err) {
     t.ok(err instanceof Error, 'must emit Error');
+
     errMsg = err.message;
   });
 
@@ -51,16 +46,15 @@ test('emit error event but not end event', function(t) {
       t.equal(data, '', 'no data event emitted');
       t.equal(end, false, 'no end event emitted');
       t.ok(/non-zero exit code/.test(errMsg), 'non zero exit code');
-      t.ok(/Not a git repository/.test(errMsg), 'correct error message');
+
+      t.end();
     });
   });
 });
 
 test('limit stream to number of bytes', function(t) {
-  var size, stream, thisFile;
-
-  size     = 0;
-  stream   = toReadStream(spawn('cat', ['/dev/urandom']), 100);
+  var size = 0;
+  var stream = toReadStream(spawn('cat', [path.resolve(__filename)]), 2);
 
   stream.on('data', function(buf) {
     size += buf.length;

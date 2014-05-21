@@ -1,14 +1,20 @@
-var through = require('through'),
-    limit   = require('limit-spawn');
+"use strict";
+
+var through = require('through2');
+var limit = require('limit-spawn');
 
 function readStreamIfy(ps, maxBytes) {
-  var stream, err;
+  var err = '';
+  var limitExceeded = false;
+  var stream = through();
 
-  err           = '';
-  limitExceeded = false;
-  stream        = through();
+  if (maxBytes) {
+    limit(ps, maxBytes);
+  }
 
-  if (maxBytes) { limit(ps, maxBytes); }
+  ps.on('error', function(err) {
+    stream.emit('error', err);
+  });
 
   ps.on('max-limit-exceeded', function() {
     limitExceeded = true;
