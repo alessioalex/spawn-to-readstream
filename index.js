@@ -37,6 +37,10 @@ function readStreamIfy(ps, maxBytes) {
     }
   });
 
+  // this was needed after switching to through2
+  stream.pause();
+  setImmediate(function() { stream.resume(); });
+
   return stream;
 }
 
