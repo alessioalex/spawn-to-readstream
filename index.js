@@ -20,6 +20,10 @@ function readStreamIfy(ps, maxBytes) {
     limitExceeded = true;
   });
 
+  ps.stdin.on('error', function(err) {
+    stream.emit('error', err);
+  });
+
   ps.stdout.on('data', function(data) {
     stream.emit('data', data);
   });
